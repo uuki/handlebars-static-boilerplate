@@ -34,7 +34,7 @@ const js = {
 
 // Style loaders
 const styleLoader = {
-  loader: 'style-loader'
+  loader: 'style-loader',
 };
 
 const cssLoader = {
@@ -48,7 +48,7 @@ const postcssLoader = {
   loader: 'postcss-loader',
   options: {
     plugins: [
-      require('autoprefixer')(),
+      require('autoprefixer')({ grid: true }),
     ],
     sourceMap,
   },
@@ -61,6 +61,12 @@ const css = {
     cssLoader,
     postcssLoader,
   ],
+};
+
+const sassPre = {
+  test: /\.s[c|a]ss$/,
+  enforce: 'pre',
+  loader: 'import-glob-loader',
 };
 
 const sass = {
@@ -141,6 +147,7 @@ module.exports = [
   html,
   js,
   css,
+  sassPre,
   sass,
   images,
   fonts,
