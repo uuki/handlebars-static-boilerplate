@@ -53,12 +53,6 @@ async function runSetup() {
       name: 'cssreset',
       message: 'Which CSS reset library would you like installed?',
       choices: ['normalize.css', 'reset.css', 'sanitize.css', 'None'],
-    },
-    {
-      type: 'select',
-      name: 'template_engine',
-      message: 'Choose template engine.',
-      choices: ['Handlebars', 'None'],
     }
   ]);
 
@@ -88,8 +82,6 @@ async function runSetup() {
 
     fs.writeFile(path.join(ROOT, '/src/stylesheets/styles.scss'), cssContent, (err) => {});
   }
-
-  // Add template engine default structure
 };
 
 if (!skip_setup) {

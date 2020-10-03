@@ -6,7 +6,8 @@ const fs = require('fs');
 
 const WebpackBar = require('webpackbar');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
+const HandlebarsPlugin = require('handlebars-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const WebappWebpackPlugin = require('webapp-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -14,6 +15,7 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const RobotstxtPlugin = require('robotstxt-webpack-plugin');
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
 
+const { makeDataReplacements, registerHandlersHelpers } = require('./webpack.helpers.js');
 const config = require('./site.config');
 
 // Hot module replacement
@@ -55,20 +57,51 @@ const cssExtract = new MiniCssExtractPlugin({
 
 // HTML generation
 const paths = [];
-const generateHTMLPlugins = () => glob.sync('./src/**/*.html').map((dir) => {
-  const filename = path.basename(dir);
+const generateHTMLPlugins = () => glob.sync('./src/views/layout/*.hbs').map((dir) => {
+  const filename = path.basename(dir)
+  const dirname = dir.replace('./src', path.join(config.root, config.paths.src))
 
-  if (filename !== '404.html') {
-    paths.push(filename);
+  console.log('⭐filename', path.join(config.root, 'generated', filename))
+  console.log('⭐template', dirname)
+
+  if (filename !== '404.hbs') {
+    paths.push(filename.replace('.hbs', '.html'));
   }
 
-  return new HTMLWebpackPlugin({
-    filename,
-    template: path.join(config.root, config.paths.src, filename),
-    meta: {
-      viewport: config.viewport,
-    },
+  return new HtmlWebpackPlugin({
+    filename: path.join(config.root, 'generated', filename),
+    template: dirname,
+    inject: false,
+    // meta: {
+    //   viewport: config.viewport,
+    // },
   });
+});
+
+console.log('⭐entry', `${config.root}/${config.paths.src}/views/pages/**/*.hbs`)
+
+// Handlebars
+const handlebarsPlugin = new HandlebarsPlugin({
+  htmlWebpackPlugin: {
+    enabled: true,
+    prefix: 'html',
+  },
+  entry: `${config.root}/${config.paths.src}/views/pages/**/*.hbs`,
+  output: (name, dir) => {
+    const outputPath = path.dirname(dir).replace(`${config.root}/${config.paths.src}/views/pages`, '')
+    return path.join(config.root, config.paths.dist, outputPath, 'index.html');
+  },
+  data: path.join(config.root, config.paths.src, 'data', '*.json'),
+  partials: [
+    path.join(config.root, 'generated', '*.hbs'),
+    path.join(config.root, config.paths.src, 'views', 'partials', '*.hbs'),
+  ],
+  onBeforeSetup: (Handlebars) => {
+    return registerHandlersHelpers(Handlebars);
+  },
+  onBeforeRender: (Handlebars, data) => {
+    return makeDataReplacements(data);
+  },
 });
 
 // Sitemap
@@ -114,7 +147,7 @@ class GoogleAnalyticsPlugin {
 
   apply(compiler) {
     compiler.hooks.compilation.tap('GoogleAnalyticsPlugin', (compilation) => {
-      HTMLWebpackPlugin.getHooks(compilation).beforeEmit.tapAsync(
+      HtmlWebpackPlugin.getHooks(compilation).beforeEmit.tapAsync(
         'GoogleAnalyticsPlugin',
         (data, cb) => {
           data.html = data.html.replace('</head>', `${CODE.replace('{{ID}}', this.id) }</head>`);
@@ -134,6 +167,7 @@ module.exports = [
   stylelint,
   cssExtract,
   ...generateHTMLPlugins(),
+  handlebarsPlugin,
   fs.existsSync(config.favicon) && favicons,
   config.env === 'production' && optimizeCss,
   config.env === 'production' && robots,
