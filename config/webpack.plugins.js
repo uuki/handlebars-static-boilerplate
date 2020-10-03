@@ -57,12 +57,9 @@ const cssExtract = new MiniCssExtractPlugin({
 
 // HTML generation
 const paths = [];
-const generateHTMLPlugins = () => glob.sync('./src/views/layout/*.hbs').map((dir) => {
+const generateHTMLPlugins = () => glob.sync('./src/views/layouts/*.hbs').map((dir) => {
   const filename = path.basename(dir)
   const dirname = dir.replace('./src', path.join(config.root, config.paths.src))
-
-  console.log('⭐filename', path.join(config.root, 'generated', filename))
-  console.log('⭐template', dirname)
 
   if (filename !== '404.hbs') {
     paths.push(filename.replace('.hbs', '.html'));
@@ -77,8 +74,6 @@ const generateHTMLPlugins = () => glob.sync('./src/views/layout/*.hbs').map((dir
     // },
   });
 });
-
-console.log('⭐entry', `${config.root}/${config.paths.src}/views/pages/**/*.hbs`)
 
 // Handlebars
 const handlebarsPlugin = new HandlebarsPlugin({
