@@ -49,6 +49,10 @@ const postcssLoader = {
   options: {
     plugins: [
       require('autoprefixer')({ grid: true }),
+      ...(config.env === 'production' ? [require('@fullhuman/postcss-purgecss')({
+        content: [`./${config.paths.src}/views/**/*.hbs`],
+        defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
+      })]: []),
     ],
     sourceMap,
   },
