@@ -1,8 +1,13 @@
 {{#extend "html/default"}}
+{{#content "head"}}
+  <title>{{ config.site_name }}</title>
+  <meta name="description" content="{{ config.site_description }}">
+{{/content}}
+
 {{#content "body"}}
   <main role="main">
     {{> partials/header }}
-    <h1>{{site.title}}</h1>
+    <h1>{{config.site_name}}</h1>
   </main>
 {{/content}}
 {{/extend}}

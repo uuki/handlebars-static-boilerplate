@@ -69,9 +69,6 @@ const generateHTMLPlugins = () => glob.sync('./src/views/layouts/*.hbs').map((di
     filename: path.join(config.root, 'generated', filename),
     template: dirname,
     inject: false,
-    // meta: {
-    //   viewport: config.viewport,
-    // },
   });
 });
 
@@ -80,6 +77,9 @@ const handlebarsPlugin = new HandlebarsPlugin({
   htmlWebpackPlugin: {
     enabled: true,
     prefix: 'html',
+    // meta: {
+    //   viewport: config.viewport,
+    // },
   },
   entry: `${config.root}/${config.paths.src}/views/pages/**/*.hbs`,
   output: (name, dir) => {

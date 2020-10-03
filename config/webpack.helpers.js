@@ -1,5 +1,6 @@
 const handlebarsLayouts = require('handlebars-layouts');
 const handlebarsHelpers = require('handlebars-helpers')();
+const config = require('./site.config');
 
 const handlebarsContext = {};
 function _handlebarsEqualHelper(name, value, options) {
@@ -23,12 +24,19 @@ function _escapeForRegex(string) {
 }
 
 function makeDataReplacements(originalData) {
-  const { replacements, ...data } = originalData;
+  const { ...data } = originalData;
+
   let dataAsString = JSON.stringify(data);
-  Object.keys(replacements).map(key => {
-    dataAsString = dataAsString.replace(new RegExp(_escapeForRegex(key), 'g'), replacements[key]);
+  Object.keys(config.replacements).map(key => {
+    dataAsString = dataAsString.replace(new RegExp(_escapeForRegex(key), 'g'), config.replacements[key]);
   });
-  return JSON.parse(dataAsString);
+
+  const result = JSON.parse(dataAsString)
+
+  return {
+    ...result,
+    config: { ...config }
+  };
 }
 
 module.exports = {
