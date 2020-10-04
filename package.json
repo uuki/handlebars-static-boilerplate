@@ -1,28 +1,16 @@
 {
-  "name": "static-site-boilerplate",
+  "name": "handlebars-static-boilerplate",
   "description": "A modern boilerplate for static website development",
-  "version": "1.1.0",
-  "homepage": "http://staticsiteboilerplate.com",
-  "author": {
-    "name": "Eric Alli",
-    "url": "http://ericalli.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ericalli/static-site-boilerplate.git"
-  },
+  "version": "1.0.0",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ericalli/static-site-boilerplate/issues"
-  },
   "keywords": [
     "html5",
     "css3",
     "es6",
     "frontend",
     "sass",
-    "less",
     "static",
+    "handlebars",
     "boilerplate",
     "webpack"
   ],
