@@ -3,17 +3,23 @@ const cssnano = require('cssnano');
 const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
+const beautify = require('js-beautify').html;
 
 const WebpackBar = require('webpackbar');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HandlebarsPlugin = require('handlebars-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const ResourceHintsWebpackPlugin = require('resource-hints-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const WebappWebpackPlugin = require('webapp-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const RobotstxtPlugin = require('robotstxt-webpack-plugin');
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
+const LicenseInfoWebpackPlugin = require('license-info-webpack-plugin').default;
 
 const { makeDataReplacements, registerHandlersHelpers } = require('./webpack.helpers.js');
 const config = require('./site.config');
@@ -72,19 +78,26 @@ const generateHTMLPlugins = () => glob.sync('./src/views/layouts/*.hbs').map((di
   });
 });
 
+const resourceHintsPlugin = new ResourceHintsWebpackPlugin();
+const scriptExtHtmlPlugin = new ScriptExtHtmlWebpackPlugin({
+  custom: [
+    {
+      test: /\.js$/,
+      attribute: 'async',
+    },
+  ]
+});
+
 // Handlebars
 const handlebarsPlugin = new HandlebarsPlugin({
   htmlWebpackPlugin: {
     enabled: true,
     prefix: 'html',
-    // meta: {
-    //   viewport: config.viewport,
-    // },
   },
   entry: `${config.root}/${config.paths.src}/views/pages/**/*.hbs`,
   output: (name, dir) => {
     const outputPath = path.dirname(dir).replace(`${config.root}/${config.paths.src}/views/pages`, '')
-    return path.join(config.root, config.paths.dist, outputPath, 'index.html');
+    return path.join(config.root, config.paths.dist, outputPath, `${name}.html`);
   },
   data: path.join(config.root, config.paths.src, 'data', '*.json'),
   partials: [
@@ -94,9 +107,27 @@ const handlebarsPlugin = new HandlebarsPlugin({
   onBeforeSetup: (Handlebars) => {
     return registerHandlersHelpers(Handlebars);
   },
+  // onBeforeAddPartials: (Handlebars, partialsMap) => {},
+  // onBeforeCompile: (Handlebars, templateContent) => {},
   onBeforeRender: (Handlebars, data) => {
     return makeDataReplacements(data);
   },
+  onBeforeSave: (Handlebars, resultHtml, filename) => {
+    if (config.env !== 'production') {
+      return resultHtml
+    }
+    return beautify(resultHtml, {
+      end_with_newline: true,
+      max_preserve_newlines: 0,
+      indent_size: 2,
+      indent_with_tabs: false,
+      indent_inner_html: false,
+      preserve_newlines: true,
+      wrap_line_length: 80,
+      unformatted: ['p', 'i', 'b', 'span', 'a']
+    })
+  },
+  // onDone: (Handlebars, filename) => {},
 });
 
 // Sitemap
@@ -157,11 +188,17 @@ const google = new GoogleAnalyticsPlugin({
   id: config.googleAnalyticsUA,
 });
 
+const license = new LicenseInfoWebpackPlugin({
+  glob: '{LICENSE,license,License}*',
+});
+
 module.exports = [
   clean,
   stylelint,
   cssExtract,
   ...generateHTMLPlugins(),
+  scriptExtHtmlPlugin,
+  resourceHintsPlugin,
   handlebarsPlugin,
   fs.existsSync(config.favicon) && favicons,
   config.env === 'production' && optimizeCss,
@@ -170,4 +207,5 @@ module.exports = [
   config.googleAnalyticsUA && google,
   webpackBar,
   config.env === 'development' && hmr,
+  config.env === 'production' && license,
 ].filter(Boolean);

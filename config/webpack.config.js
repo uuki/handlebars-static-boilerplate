@@ -3,6 +3,7 @@ const path = require('path');
 const config = require('./site.config');
 const loaders = require('./webpack.loaders');
 const plugins = require('./webpack.plugins');
+const optimization = require('./webpack.optimization');
 
 module.exports = {
   context: path.join(config.root, config.paths.src),
@@ -31,4 +32,5 @@ module.exports = {
     rules: loaders,
   },
   plugins,
+  optimization,
 };
