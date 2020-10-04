@@ -33,14 +33,11 @@ const js = {
 };
 
 // Style loaders
-const styleLoader = {
-  loader: 'style-loader',
-};
-
 const cssLoader = {
   loader: 'css-loader',
   options: {
     sourceMap,
+    importLoaders: 1,
   },
 };
 
@@ -58,15 +55,6 @@ const postcssLoader = {
   },
 };
 
-const css = {
-  test: /\.css$/,
-  use: [
-    config.env === 'production' ? MiniCssExtractPlugin.loader : styleLoader,
-    cssLoader,
-    postcssLoader,
-  ],
-};
-
 const sassPre = {
   test: /\.s[c|a]ss$/,
   enforce: 'pre',
@@ -76,7 +64,12 @@ const sassPre = {
 const sass = {
   test: /\.s[c|a]ss$/,
   use: [
-    config.env === 'production' ? MiniCssExtractPlugin.loader : styleLoader,
+    {
+      loader: MiniCssExtractPlugin.loader,
+      options: {
+        hmr: (config.env === 'production')
+      }
+    },
     cssLoader,
     postcssLoader,
     {
@@ -150,7 +143,6 @@ const videos = {
 module.exports = [
   html,
   js,
-  css,
   sassPre,
   sass,
   images,

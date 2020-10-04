@@ -1,8 +1,13 @@
 {{#extend "html/default"}}
+{{#content "head"}}
+  <title>{{ config.site_name }}</title>
+  <meta name="description" content="404 Not Found">
+{{/content}}
+
 {{#content "body"}}
-<main role="main">
-  {{> partials/header }}
-  <h1>404</h1>
-</main>
+  <main role="main">
+    {{> partials/header }}
+    <h1>404</h1>
+  </main>
 {{/content}}
 {{/extend}}
