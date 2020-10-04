@@ -38,6 +38,55 @@ Launch production on http-server
 yarn start
 ```
 
+## Project Structure
+
+```
+.
+├── config
+│   ├── site.config.js
+│   ├── site.deploy.js
+│   ├── site.setup.js
+│   ├── webpack.config.js
+│   ├── webpack.helpers.js
+│   ├── webpack.loaders.js
+│   └── webpack.plugins.js
+└── src
+    ├── data
+    │   └── *.json
+    ├── images
+    ├── javascripts
+    │   └── scripts.js
+    ├── robots.txt
+    ├── stylesheets
+    │   └── styles.scss
+    └── views
+        ├── layouts
+        │   └── default.hbs
+        ├── pages
+        │   ├── 404.hbs
+        │   └── index.hbs
+        └── partials
+            └── header.hbs
+```
+
+**Output:**
+
+```
+./dist
+├── images
+├── index.html
+├── main.[hash].js
+├── main.[hash].js.map
+├── robots.txt
+├── sitemap.xml
+├── sitemap.xml.gz
+└── style.[hash].css
+```
+
+## Pages
+
+All `.hbs` files in `src/views/pages` are output as page files. Subdirectories and below are also inherited.
+
 ## Data
 
 You can use the variables of `config/site.config.js` and `src/data/*.json` in the template(hbs).
