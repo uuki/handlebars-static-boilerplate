@@ -18,6 +18,7 @@ const WebappWebpackPlugin = require('webapp-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const RobotstxtPlugin = require('robotstxt-webpack-plugin');
+const WatchExternalFilesPlugin = require('webpack-watch-files-plugin').default;
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
 const LicenseInfoWebpackPlugin = require('license-info-webpack-plugin').default;
 
@@ -59,6 +60,14 @@ const stylelint = new StyleLintPlugin();
 // Extract CSS
 const cssExtract = new MiniCssExtractPlugin({
   filename: 'style.[contenthash].css',
+});
+
+const watchPlugin = new WatchExternalFilesPlugin({
+  files: [
+    `./${config.paths.src}/views/**/*.hbs`,
+    `./${config.paths.src}/assets/**/*.scss`,
+    `./${config.paths.src}/assets/**/*.js`,
+  ]
 });
 
 // HTML generation
@@ -196,6 +205,7 @@ module.exports = [
   clean,
   stylelint,
   cssExtract,
+  watchPlugin,
   ...generateHTMLPlugins(),
   scriptExtHtmlPlugin,
   resourceHintsPlugin,

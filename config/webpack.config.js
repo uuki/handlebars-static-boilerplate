@@ -8,8 +8,8 @@ const optimization = require('./webpack.optimization');
 module.exports = {
   context: path.join(config.root, config.paths.src),
   entry: [
-    path.join(config.root, config.paths.src, 'javascripts/scripts.js'),
-    path.join(config.root, config.paths.src, 'stylesheets/styles.scss'),
+    path.join(config.root, config.paths.src, 'assets/js/scripts.js'),
+    path.join(config.root, config.paths.src, 'assets/styles/main.scss'),
   ],
   output: {
     path: path.join(config.root, config.paths.dist),
@@ -24,6 +24,9 @@ module.exports = {
     : 'cheap-eval-source-map',
   devServer: {
     contentBase: path.join(config.root, config.paths.dist),
+    publicPath: '/',
+    // hot: true,
+    watchContentBase: true,
     open: true,
     port: config.port,
     host: config.dev_host,

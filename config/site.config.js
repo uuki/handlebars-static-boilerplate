@@ -27,7 +27,7 @@ const config = {
   viewport: 'width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes,viewport-fit=cover',
 
   // Source file for favicon generation. 512x512px recommended.
-  favicon: path.join(ROOT, '/src/images/favicon.png'),
+  favicon: path.join(ROOT, '/src/assets/images/favicon.png'),
 
   // Local development URL
   dev_host: 'localhost',

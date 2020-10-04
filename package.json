@@ -72,6 +72,7 @@
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.6",
     "webpack-merge": "^4.2.1",
+    "webpack-watch-files-plugin": "^1.1.0",
     "webpackbar": "^4.0.0"
   },
   "dependencies": {
