@@ -9,16 +9,11 @@ const WebpackBar = require('webpackbar');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HandlebarsPlugin = require('handlebars-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-const ResourceHintsWebpackPlugin = require('resource-hints-webpack-plugin');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
-
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const WebappWebpackPlugin = require('webapp-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const RobotstxtPlugin = require('robotstxt-webpack-plugin');
-const WatchExternalFilesPlugin = require('webpack-watch-files-plugin').default;
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
 const LicenseInfoWebpackPlugin = require('license-info-webpack-plugin').default;
 
@@ -59,15 +54,15 @@ const stylelint = new StyleLintPlugin();
 
 // Extract CSS
 const cssExtract = new MiniCssExtractPlugin({
-  filename: 'style.[contenthash].css',
-});
-
-const watchPlugin = new WatchExternalFilesPlugin({
-  files: [
-    `./${config.paths.src}/views/**/*.hbs`,
-    `./${config.paths.src}/assets/**/*.scss`,
-    `./${config.paths.src}/assets/**/*.js`,
-  ]
+  filename: config.env === 'production' ? '[name].[contenthash].css' : '[name].css',
+  chunkFilename: '[id].css',
+  fallback: 'style-loader',
+  use: [
+    {
+      loader: 'css-loader',
+      options: { minimize: (config.env === 'production') }
+    }
+  ],
 });
 
 // HTML generation
@@ -85,16 +80,6 @@ const generateHTMLPlugins = () => glob.sync('./src/views/layouts/*.hbs').map((di
     template: dirname,
     inject: false,
   });
-});
-
-const resourceHintsPlugin = new ResourceHintsWebpackPlugin();
-const scriptExtHtmlPlugin = new ScriptExtHtmlWebpackPlugin({
-  custom: [
-    {
-      test: /\.js$/,
-      attribute: 'async',
-    },
-  ]
 });
 
 // Handlebars
@@ -205,10 +190,7 @@ module.exports = [
   clean,
   stylelint,
   cssExtract,
-  watchPlugin,
   ...generateHTMLPlugins(),
-  scriptExtHtmlPlugin,
-  resourceHintsPlugin,
   handlebarsPlugin,
   fs.existsSync(config.favicon) && favicons,
   config.env === 'production' && optimizeCss,

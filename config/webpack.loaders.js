@@ -33,14 +33,11 @@ const js = {
 };
 
 // Style loaders
-const styleLoader = {
-  loader: 'style-loader',
-};
-
 const cssLoader = {
   loader: 'css-loader',
   options: {
     sourceMap,
+    importLoaders: 1,
   },
 };
 
@@ -49,22 +46,13 @@ const postcssLoader = {
   options: {
     plugins: [
       require('autoprefixer')({ grid: true }),
-      // ...(config.env === 'production' ? [require('@fullhuman/postcss-purgecss')({
-      //   content: [`./${config.paths.src}/views/**/*.hbs`],
-      //   defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
-      // })]: []),
+      ...(config.env === 'production' ? [require('@fullhuman/postcss-purgecss')({
+        content: [`./${config.paths.src}/views/**/*.hbs`],
+        defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
+      })]: []),
     ],
     sourceMap,
   },
-};
-
-const css = {
-  test: /\.css$/,
-  use: [
-    config.env === 'production' ? MiniCssExtractPlugin.loader : styleLoader,
-    cssLoader,
-    postcssLoader,
-  ],
 };
 
 const sassPre = {
@@ -76,7 +64,12 @@ const sassPre = {
 const sass = {
   test: /\.s[c|a]ss$/,
   use: [
-    config.env === 'production' ? MiniCssExtractPlugin.loader : styleLoader,
+    {
+      loader: MiniCssExtractPlugin.loader,
+      options: {
+        hmr: (config.env === 'production')
+      }
+    },
     cssLoader,
     postcssLoader,
     {
@@ -150,7 +143,6 @@ const videos = {
 module.exports = [
   html,
   js,
-  css,
   sassPre,
   sass,
   images,

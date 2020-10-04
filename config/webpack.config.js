@@ -24,9 +24,6 @@ module.exports = {
     : 'cheap-eval-source-map',
   devServer: {
     contentBase: path.join(config.root, config.paths.dist),
-    publicPath: '/',
-    // hot: true,
-    watchContentBase: true,
     open: true,
     port: config.port,
     host: config.dev_host,
