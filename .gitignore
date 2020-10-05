@@ -1,6 +1,6 @@
 ## Project
 dist/*
-generated/*
+.generated/*
 
 ## Node.js
 lib-cov

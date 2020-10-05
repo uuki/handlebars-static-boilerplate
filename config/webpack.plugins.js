@@ -76,7 +76,7 @@ const generateHTMLPlugins = () => glob.sync('./src/views/layouts/*.hbs').map((di
   }
 
   return new HtmlWebpackPlugin({
-    filename: path.join(config.root, 'generated', filename),
+    filename: path.join(config.root, '.generated', filename),
     template: dirname,
     inject: false,
   });
@@ -95,7 +95,7 @@ const handlebarsPlugin = new HandlebarsPlugin({
   },
   data: path.join(config.root, config.paths.src, 'data', '*.json'),
   partials: [
-    path.join(config.root, 'generated', '*.hbs'),
+    path.join(config.root, '.generated', '*.hbs'),
     path.join(config.root, config.paths.src, 'views', 'partials', '*.hbs'),
   ],
   onBeforeSetup: (Handlebars) => {
