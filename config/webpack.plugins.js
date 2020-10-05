@@ -13,7 +13,9 @@ const StyleLintPlugin = require('stylelint-webpack-plugin');
 const WebappWebpackPlugin = require('webapp-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const RobotstxtPlugin = require('robotstxt-webpack-plugin');
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
 const LicenseInfoWebpackPlugin = require('license-info-webpack-plugin').default;
 
@@ -124,6 +126,28 @@ const handlebarsPlugin = new HandlebarsPlugin({
   // onDone: (Handlebars, filename) => {},
 });
 
+// Copy images
+const copy = new CopyWebpackPlugin({
+  patterns: [
+    {
+      from: path.join('./', config.paths.assets, 'images'),
+      to: path.join('./', 'images'),
+      globOptions: {
+        dot: false,
+        gitignore: false,
+        // ignore: [],
+      },
+    },
+  ],
+});
+
+// Image Minify
+const imageMinPlugin = new ImageminPlugin(
+  {
+    test: /\.(jpe?g|png|gif|svg)$/i,
+  },
+);
+
 // Sitemap
 const sitemap = new SitemapPlugin(config.site_url, paths, {
   priority: 1.0,
@@ -193,6 +217,8 @@ module.exports = [
   ...generateHTMLPlugins(),
   handlebarsPlugin,
   fs.existsSync(config.favicon) && favicons,
+  config.env === 'production' && copy,
+  config.env === 'production' && imageMinPlugin,
   config.env === 'production' && optimizeCss,
   config.env === 'production' && robots,
   config.env === 'production' && sitemap,

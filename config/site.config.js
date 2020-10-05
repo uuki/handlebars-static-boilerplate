@@ -47,6 +47,7 @@ const config = {
     config: 'config',
     src: 'src',
     dist: 'dist',
+    assets: 'assets',
   },
   package: JSON.parse(
     fs.readFileSync(path.join(ROOT, '/package.json'), { encoding: 'utf-8' }),

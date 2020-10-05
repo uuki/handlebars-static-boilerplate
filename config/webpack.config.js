@@ -8,8 +8,8 @@ const optimization = require('./webpack.optimization');
 module.exports = {
   context: path.join(config.root, config.paths.src),
   entry: [
-    path.join(config.root, config.paths.src, 'assets/js/scripts.js'),
-    path.join(config.root, config.paths.src, 'assets/styles/main.scss'),
+    path.join(config.root, config.paths.src, config.paths.assets, 'js/scripts.js'),
+    path.join(config.root, config.paths.src, config.paths.assets, 'styles/main.scss'),
   ],
   output: {
     path: path.join(config.root, config.paths.dist),
