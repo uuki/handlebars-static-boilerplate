@@ -44,7 +44,9 @@ const cssLoader = {
 const postcssLoader = {
   loader: 'postcss-loader',
   options: {
-    plugins: [
+    plugins: (loader) => [
+      require('postcss-import')({ root: loader.resourcePath }),
+      require('postcss-normalize')(),
       require('autoprefixer')({ grid: true }),
       ...(config.env === 'production' ? [require('@fullhuman/postcss-purgecss')({
         content: [`./${config.paths.src}/views/**/*.hbs`],

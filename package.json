@@ -21,6 +21,8 @@
     "postinstall": "node ./config/site.setup.js",
     "lint:js": "./node_modules/.bin/eslint \"src/**/*.js\"",
     "lint:styles": "stylelint \"src/**/*.scss\"",
+    "fix:js": "yarn lint:js --fix",
+    "fix:styles": "yarn lint:styles --fix",
     "build": "cross-env NODE_ENV=production webpack --config ./config/webpack.config.js",
     "deploy": "node ./config/site.deploy.js"
   },
@@ -55,7 +57,9 @@
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
+    "postcss-normalize": "^9.0.0",
     "postcss-sass": "^0.4.1",
     "robotstxt-webpack-plugin": "^6.0.0",
     "sass-loader": "^7.2.0",
