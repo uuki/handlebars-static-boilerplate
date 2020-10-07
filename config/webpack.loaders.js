@@ -24,9 +24,6 @@ const js = {
   use: [
     {
       loader: 'babel-loader',
-      options: {
-        presets: ['@babel/preset-env'],
-      },
     },
     'eslint-loader',
   ],
@@ -50,8 +47,8 @@ const postcssLoader = {
       require('autoprefixer')({ grid: true }),
       ...(config.env === 'production' ? [require('@fullhuman/postcss-purgecss')({
         content: [`./${config.paths.src}/views/**/*.hbs`],
-        defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
-      })]: []),
+        defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
+      })] : []),
     ],
     sourceMap,
   },
@@ -69,8 +66,8 @@ const sass = {
     {
       loader: MiniCssExtractPlugin.loader,
       options: {
-        hmr: (config.env === 'production')
-      }
+        hmr: (config.env === 'production'),
+      },
     },
     cssLoader,
     postcssLoader,
