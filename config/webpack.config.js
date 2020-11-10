@@ -1,16 +1,17 @@
-const path = require('path');
+const path = require('path')
 
-const config = require('./site.config');
-const loaders = require('./webpack.loaders');
-const plugins = require('./webpack.plugins');
-const optimization = require('./webpack.optimization');
+const config = require('./site.config')
+const loaders = require('./webpack.loaders')
+const plugins = require('./webpack.plugins')
+const optimization = require('./webpack.optimization')
 
 module.exports = {
   context: path.join(config.root, config.paths.src),
-  entry: [
-    path.join(config.root, config.paths.src, config.paths.assets, 'js/scripts.js'),
-    path.join(config.root, config.paths.src, config.paths.assets, 'styles/main.scss'),
-  ],
+  entry: {
+    [`${config.paths.js}/script`]: [
+      path.join(config.root, config.paths.src, config.paths.assets, 'js/scripts.js'),
+    ],
+  },
   output: {
     path: path.join(config.root, config.paths.dist),
     filename: '[name].[hash].js',
@@ -33,4 +34,4 @@ module.exports = {
   },
   plugins,
   optimization,
-};
+}

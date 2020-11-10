@@ -1,10 +1,10 @@
-const path = require('path');
-const fs = require('fs');
+const path = require('path')
+const fs = require('fs')
 
-let ROOT = process.env.PWD;
+let ROOT = process.env.PWD
 
 if (!ROOT) {
-  ROOT = process.cwd();
+  ROOT = process.cwd()
 }
 
 const config = {
@@ -37,7 +37,7 @@ const config = {
 
   // Replace paths for handlebars
   replacements: {
-    "[images]": "/images/",
+    '[images]': '/images/',
   },
 
   // Advanced configuration, edit with caution!
@@ -48,10 +48,12 @@ const config = {
     src: 'src',
     dist: 'dist',
     assets: 'assets',
+    css: 'css',
+    js: 'js',
   },
   package: JSON.parse(
     fs.readFileSync(path.join(ROOT, '/package.json'), { encoding: 'utf-8' }),
   ),
-};
+}
 
-module.exports = config;
+module.exports = config

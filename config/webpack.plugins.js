@@ -1,29 +1,29 @@
-const webpack = require('webpack');
-const cssnano = require('cssnano');
-const glob = require('glob');
-const path = require('path');
-const fs = require('fs');
-const beautify = require('js-beautify').html;
+const webpack = require('webpack')
+const cssnano = require('cssnano')
+const glob = require('glob')
+const path = require('path')
+const fs = require('fs')
+const beautify = require('js-beautify').html
 
-const WebpackBar = require('webpackbar');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const HandlebarsPlugin = require('handlebars-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const StyleLintPlugin = require('stylelint-webpack-plugin');
-const WebappWebpackPlugin = require('webapp-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const RobotstxtPlugin = require('robotstxt-webpack-plugin');
-const ImageminPlugin = require('imagemin-webpack-plugin').default;
-const SitemapPlugin = require('sitemap-webpack-plugin').default;
-const LicenseInfoWebpackPlugin = require('license-info-webpack-plugin').default;
+const WebpackBar = require('webpackbar')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const HandlebarsPlugin = require('handlebars-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const StyleLintPlugin = require('stylelint-webpack-plugin')
+const WebappWebpackPlugin = require('webapp-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const RobotstxtPlugin = require('robotstxt-webpack-plugin')
+const ImageminPlugin = require('imagemin-webpack-plugin').default
+const SitemapPlugin = require('sitemap-webpack-plugin').default
+const LicenseInfoWebpackPlugin = require('license-info-webpack-plugin').default
 
-const { makeDataReplacements, registerHandlersHelpers } = require('./webpack.helpers.js');
-const config = require('./site.config');
+const { makeDataReplacements, registerHandlersHelpers } = require('./webpack.helpers.js')
+const config = require('./site.config')
 
 // Hot module replacement
-const hmr = new webpack.HotModuleReplacementPlugin();
+const hmr = new webpack.HotModuleReplacementPlugin()
 
 // Optimize CSS assets
 const optimizeCss = new OptimizeCssAssetsPlugin({
@@ -40,49 +40,49 @@ const optimizeCss = new OptimizeCssAssetsPlugin({
     ],
   },
   canPrint: true,
-});
+})
 
 // Generate robots.txt
 const robots = new RobotstxtPlugin({
   sitemap: `${config.site_url}/sitemap.xml`,
   host: config.site_url,
-});
+})
 
 // Clean webpack
-const clean = new CleanWebpackPlugin();
+const clean = new CleanWebpackPlugin()
 
 // Stylelint
-const stylelint = new StyleLintPlugin();
+const stylelint = new StyleLintPlugin()
 
 // Extract CSS
 const cssExtract = new MiniCssExtractPlugin({
-  filename: config.env === 'production' ? '[name].[contenthash].css' : '[name].css',
+  filename: `${config.paths.css}/${config.env === 'production' ? 'style.[contenthash].css' : 'style.css'}`,
   chunkFilename: '[id].css',
   fallback: 'style-loader',
   use: [
     {
       loader: 'css-loader',
-      options: { minimize: (config.env === 'production') }
-    }
+      options: { minimize: (config.env === 'production') },
+    },
   ],
-});
+})
 
 // HTML generation
-const paths = [];
+const paths = []
 const generateHTMLPlugins = () => glob.sync('./src/views/layouts/*.hbs').map((dir) => {
   const filename = path.basename(dir)
   const dirname = dir.replace('./src', path.join(config.root, config.paths.src))
 
   if (filename !== '404.hbs') {
-    paths.push(filename.replace('.hbs', '.html'));
+    paths.push(filename.replace('.hbs', '.html'))
   }
 
   return new HtmlWebpackPlugin({
     filename: path.join(config.root, '.generated', filename),
     template: dirname,
     inject: false,
-  });
-});
+  })
+})
 
 // Handlebars
 const handlebarsPlugin = new HandlebarsPlugin({
@@ -93,21 +93,17 @@ const handlebarsPlugin = new HandlebarsPlugin({
   entry: `${config.root}/${config.paths.src}/views/pages/**/*.hbs`,
   output: (name, dir) => {
     const outputPath = path.dirname(dir).replace(`${config.root}/${config.paths.src}/views/pages`, '')
-    return path.join(config.root, config.paths.dist, outputPath, `${name}.html`);
+    return path.join(config.root, config.paths.dist, outputPath, `${name}.html`)
   },
   data: path.join(config.root, config.paths.src, 'data', '*.json'),
   partials: [
     path.join(config.root, '.generated', '*.hbs'),
     path.join(config.root, config.paths.src, 'views', 'partials', '*.hbs'),
   ],
-  onBeforeSetup: (Handlebars) => {
-    return registerHandlersHelpers(Handlebars);
-  },
+  onBeforeSetup: (Handlebars) => registerHandlersHelpers(Handlebars),
   // onBeforeAddPartials: (Handlebars, partialsMap) => {},
   // onBeforeCompile: (Handlebars, templateContent) => {},
-  onBeforeRender: (Handlebars, data) => {
-    return makeDataReplacements(data);
-  },
+  onBeforeRender: (Handlebars, data) => makeDataReplacements(data),
   onBeforeSave: (Handlebars, resultHtml, filename) => {
     if (config.env !== 'production') {
       return resultHtml
@@ -120,11 +116,11 @@ const handlebarsPlugin = new HandlebarsPlugin({
       indent_inner_html: false,
       preserve_newlines: true,
       wrap_line_length: 80,
-      unformatted: ['p', 'i', 'b', 'span', 'a']
+      unformatted: ['p', 'i', 'b', 'span', 'a'],
     })
   },
   // onDone: (Handlebars, filename) => {},
-});
+})
 
 // Copy images
 const copy = new CopyWebpackPlugin({
@@ -139,20 +135,20 @@ const copy = new CopyWebpackPlugin({
       },
     },
   ],
-});
+})
 
 // Image Minify
 const imageMinPlugin = new ImageminPlugin(
   {
     test: /\.(jpe?g|png|gif|svg)$/i,
   },
-);
+)
 
 // Sitemap
 const sitemap = new SitemapPlugin(config.site_url, paths, {
   priority: 1.0,
   lastmodrealtime: true,
-});
+})
 
 // Favicons
 const favicons = new WebappWebpackPlugin({
@@ -174,19 +170,19 @@ const favicons = new WebappWebpackPlugin({
       yandex: false,
     },
   },
-});
+})
 
 // Webpack bar
 const webpackBar = new WebpackBar({
   color: '#ff6469',
-});
+})
 
 // Google analytics
-const CODE = `<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','{{ID}}','auto');ga('send','pageview');</script>`;
+const CODE = '<script>(function(i,s,o,g,r,a,m){i[\'GoogleAnalyticsObject\']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,\'script\',\'//www.google-analytics.com/analytics.js\',\'ga\');ga(\'create\',\'{{ID}}\',\'auto\');ga(\'send\',\'pageview\');</script>'
 
 class GoogleAnalyticsPlugin {
   constructor({ id }) {
-    this.id = id;
+    this.id = id
   }
 
   apply(compiler) {
@@ -194,21 +190,21 @@ class GoogleAnalyticsPlugin {
       HtmlWebpackPlugin.getHooks(compilation).beforeEmit.tapAsync(
         'GoogleAnalyticsPlugin',
         (data, cb) => {
-          data.html = data.html.replace('</head>', `${CODE.replace('{{ID}}', this.id) }</head>`);
-          cb(null, data);
+          data.html = data.html.replace('</head>', `${CODE.replace('{{ID}}', this.id)}</head>`)
+          cb(null, data)
         },
-      );
-    });
+      )
+    })
   }
 }
 
 const google = new GoogleAnalyticsPlugin({
   id: config.googleAnalyticsUA,
-});
+})
 
 const license = new LicenseInfoWebpackPlugin({
   glob: '{LICENSE,license,License}*',
-});
+})
 
 module.exports = [
   clean,
@@ -226,4 +222,4 @@ module.exports = [
   webpackBar,
   config.env === 'development' && hmr,
   config.env === 'production' && license,
-].filter(Boolean);
+].filter(Boolean)

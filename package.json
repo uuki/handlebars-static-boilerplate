@@ -18,7 +18,7 @@
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config ./config/webpack.config.js",
     "start": "cross-env NODE_ENV=production webpack-dev-server --config ./config/webpack.config.js && http-server ./dist -o",
     "setup": "node ./config/site.setup.js",
-    "postinstall": "node ./config/site.setup.js",
+    "postinstall": "cd libs/fontagon && yarn install && cd ../../",
     "lint:js": "./node_modules/.bin/eslint \"src/**/*.js\"",
     "lint:styles": "stylelint \"src/**/*.scss\"",
     "fix:js": "yarn lint:js --fix",

@@ -21,7 +21,14 @@ const uglify = new UglifyJsPlugin({
 });
 
 module.exports = {
-  minimizer: [
-    config.env === 'production' && uglify,
-  ].filter(Boolean)
+  namedChunks: true,
+  splitChunks: {
+    automaticNameDelimiter: '-',
+    cacheGroups: {
+      vendors: false,
+    },
+  },
+  // minimizer: [
+  //   config.env === 'production' && uglify,
+  // ].filter(Boolean)
 }
